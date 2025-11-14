@@ -3,6 +3,9 @@
 >
 > - Edward "BTMC" Ling, 2024
 
+> [!CAUTION]
+> CAPO Games and rhythia.com are not affiliated nor supported by us! We do, however, support any modification of our logos/content in the client source because of our [license](https://github.com/David20122/sound-space-plus/blob/nightly/LICENSE.txt)!
+
 While you're here, join our discord in [here](https://discord.gg/rhythia)
 
 # Table of contents
