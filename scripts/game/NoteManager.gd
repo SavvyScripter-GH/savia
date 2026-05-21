@@ -115,9 +115,7 @@ func note_reposition(i:int):
 			nt.origin.y = real_position.y + (chaos_offset.y * v)
 		
 		if Rhythia.mod_earthquake:
-			var rcoord = Vector2(earthquake_rng.randf_range(-0.25,0.25),earthquake_rng.randf_range(-0.25,0.25))
-			nt.origin.x = real_position.x + (rcoord.x * (current_dist * 0.1))
-			nt.origin.y = real_position.y + (rcoord.y * (current_dist * 0.1))
+			nt.origin = Vector3(real_position.x - 1, real_position.y + 1, -current_dist)
 
 #		if Rhythia.note_visual_approach:
 #			$Approach.opacity = 1 - (current_dist / Rhythia.get("spawn_distance"))
@@ -185,20 +183,44 @@ func note_reposition(i:int):
 		return false#!(state == Globals.NSTATE_ACTIVE and sign(approachSpeed) == 1 and current_dist > 100)
 
 func note_check_collision(i:int):
-	var cpos:Vector3 = $Cursor.transform.origin
-	
+	# 1. Replay logic stays the same
 	if Rhythia.replaying and Rhythia.replay.sv != 1:
 		return Rhythia.replay.should_hit(i)
-	else:
-		var hbs:float = Rhythia.note_hitbox_size/2
-		if hbs == 0.57: hbs = 0.56875 # 1.1375
-		var ori:Vector2 = notes[i][0]
-		return (cpos.x <= ori.x + hbs and cpos.x >= ori.x - hbs) and (cpos.y <= ori.y + hbs and cpos.y >= ori.y - hbs)
+	
+	# 2. Convert cursor world position to the $Notes container's local space
+	# This accounts for the container's rotation and translation automatically
+	var cursor_world_pos = $Cursor.global_transform.origin
+	var local_cpos = $Notes.to_local(cursor_world_pos)
+	
+	# 3. Hitbox size math
+	var hbs:float = Rhythia.note_hitbox_size/2
+	if hbs == 0.57: hbs = 0.56875 
+	
+	# 4. Define where the note's center is relative to the $Notes container
+	var target_pos:Vector2 = notes[i][0] # Original position
+	
+	if Rhythia.mod_earthquake:
+		# Because you subtracted 1 and added 1 in note_reposition, 
+		# we must do the same here so the hitbox matches the visual note center
+		target_pos.x -= 1
+		target_pos.y += 1
+		
+	# 5. Compare the LOCAL cursor position to the LOCAL note position
+	return (local_cpos.x <= target_pos.x + hbs and local_cpos.x >= target_pos.x - hbs) and \
+		   (local_cpos.y <= target_pos.y + hbs and local_cpos.y >= target_pos.y - hbs)
 
 var asq = Rhythia.note_visual_approach
 var last_reposition_ms:float = -10000
 var out_of_notes:bool = false
 func reposition_notes(force:bool=false,rerun_start:int=-1):
+	if Rhythia.mod_earthquake:
+		$Notes.translation = Vector3(1, -1, 0)
+		$Notes.rotation.z = ms * 0.0006
+	else:
+		# Reset rotation if earthquake is off
+		$Notes.rotation.z = 0
+		$Notes.translation = Vector3.ZERO
+		
 	var rerun_required:bool = false
 	$Label.text = ""
 #	force = force or OS.has_feature("debug")
