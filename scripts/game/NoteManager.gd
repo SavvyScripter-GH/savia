@@ -114,11 +114,14 @@ func note_reposition(i:int):
 			nt.origin.x = real_position.x + (chaos_offset.x * v)	
 			nt.origin.y = real_position.y + (chaos_offset.y * v)
 		
+		if Rhythia.mod_360:
+			nt.origin = Vector3(real_position.x - 1, real_position.y + 1, -current_dist)
+		
 		if Rhythia.mod_earthquake:
 			var rcoord = Vector2(earthquake_rng.randf_range(-0.25,0.25),earthquake_rng.randf_range(-0.25,0.25))
 			nt.origin.x = real_position.x + (rcoord.x * (current_dist * 0.1))
 			nt.origin.y = real_position.y + (rcoord.y * (current_dist * 0.1))
-
+			
 #		if Rhythia.note_visual_approach:
 #			$Approach.opacity = 1 - (current_dist / Rhythia.get("spawn_distance"))
 #
@@ -185,20 +188,36 @@ func note_reposition(i:int):
 		return false#!(state == Globals.NSTATE_ACTIVE and sign(approachSpeed) == 1 and current_dist > 100)
 
 func note_check_collision(i:int):
-	var cpos:Vector3 = $Cursor.transform.origin
-	
 	if Rhythia.replaying and Rhythia.replay.sv != 1:
 		return Rhythia.replay.should_hit(i)
-	else:
-		var hbs:float = Rhythia.note_hitbox_size/2
-		if hbs == 0.57: hbs = 0.56875 # 1.1375
-		var ori:Vector2 = notes[i][0]
-		return (cpos.x <= ori.x + hbs and cpos.x >= ori.x - hbs) and (cpos.y <= ori.y + hbs and cpos.y >= ori.y - hbs)
+	
+	var cursor_world_pos = $Cursor.global_transform.origin
+	var local_cpos = $Notes.to_local(cursor_world_pos)
+	
+	var hbs:float = Rhythia.note_hitbox_size/2
+	if hbs == 0.57: hbs = 0.56875 
+	
+	var target_pos:Vector2 = notes[i][0]
+	
+	if Rhythia.mod_360:
+		target_pos.x -= 1
+		target_pos.y += 1
+		
+	return (local_cpos.x <= target_pos.x + hbs and local_cpos.x >= target_pos.x - hbs) and \
+		   (local_cpos.y <= target_pos.y + hbs and local_cpos.y >= target_pos.y - hbs)
 
 var asq = Rhythia.note_visual_approach
 var last_reposition_ms:float = -10000
 var out_of_notes:bool = false
 func reposition_notes(force:bool=false,rerun_start:int=-1):
+	if Rhythia.mod_360:
+		$Notes.translation = Vector3(1, -1, 0)
+		$Notes.rotation.z = ms * 0.0006
+	else:
+		# Reset rotation if earthquake is off
+		$Notes.rotation.z = 0
+		$Notes.translation = Vector3.ZERO
+		
 	var rerun_required:bool = false
 	$Label.text = ""
 #	force = force or OS.has_feature("debug")

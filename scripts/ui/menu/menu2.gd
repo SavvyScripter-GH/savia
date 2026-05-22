@@ -4,7 +4,7 @@ func idle_status():
 	# after 5 min on the menu switch to "listening to music"
 	var activity = Discord.Activity.new()
 	activity.set_type(Discord.ActivityType.Playing)
-	activity.set_details("Main Menu")
+	activity.set_details("Rotation Main Menu")
 	activity.set_state("Listening to music")
 
 	var assets = activity.get_assets()
@@ -32,8 +32,8 @@ func _ready():
 	if ProjectSettings.get_setting("application/config/discord_rpc"):
 		var activity = Discord.Activity.new()
 		activity.set_type(Discord.ActivityType.Playing)
-		activity.set_details("Main Menu")	
-		activity.set_state("Selecting a song")
+		activity.set_details("Rotation Main Menu")	
+		activity.set_state("aSelecting a song")
 
 		var assets = activity.get_assets()
 		assets.set_large_image("icon-bg")

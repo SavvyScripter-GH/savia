@@ -254,7 +254,7 @@ func load_db_maps():
 							i += 1
 							if fmod(i,floor(float(netmaps.size())/100)) == 0: yield(get_tree(),"idle_frame")
 			elif netmaps_res.response_code == 304:
-				print("Cache hit!")
+				#print("Cache hit!")
 				var res = file.open(Globals.p("user://.mapdb_cache.json"),File.READ)
 				if res == OK:
 					var nmp = parse_json(file.get_as_text())
@@ -336,16 +336,16 @@ func attempt_update():
 	print("Extracting")
 	ProjectSettings.load_resource_pack(file_path,false)
 	var read_file = File.new()
-	read_file.open("res://SoundSpacePlus.pck",File.READ)
+	read_file.open("res://Rhythiarot.pck",File.READ)
 	var new_file_buffer = read_file.get_buffer(read_file.get_len())
 	read_file.close()
 	var file = File.new()
 	var dir = Directory.new()
-	if dir.file_exists(exec_dir.plus_file("SoundSpacePlus.pck.old")):
-		dir.remove(exec_dir.plus_file("SoundSpacePlus.pck.old"))
-	if dir.file_exists(exec_dir.plus_file("SoundSpacePlus.pck")):
-		dir.rename(exec_dir.plus_file("SoundSpacePlus.pck"),exec_dir.plus_file("SoundSpacePlus.pck.old"))
-	file.open(exec_dir.plus_file("SoundSpacePlus.pck"),File.WRITE)
+	if dir.file_exists(exec_dir.plus_file("Rhythiarot.pck.old")):
+		dir.remove(exec_dir.plus_file("Rhythiarot.pck.old"))
+	if dir.file_exists(exec_dir.plus_file("Rhythiarot.pck")):
+		dir.rename(exec_dir.plus_file("Rhythiarot.pck"),exec_dir.plus_file("Rhythiarot.pck.old"))
+	file.open(exec_dir.plus_file("Rhythiarot.pck"),File.WRITE)
 	file.store_buffer(new_file_buffer)
 	file.close()
 	emit_signal("update_finished")

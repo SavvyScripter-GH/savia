@@ -4,8 +4,6 @@
 [ext_resource path="res://w.gd" type="Script" id=2]
 [ext_resource path="res://assets/images/ui/arcw.png" type="Texture" id=3]
 
-
-
 [node name="w" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0

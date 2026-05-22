@@ -425,7 +425,7 @@ func update_rpc_song(): # Discord RPC
 	if mod_hardrock: mods.append("Hard Rock")
 	if replay.autoplayer: mods.append("Auto")
 	
-	if mods.size() == 0: txt = "No modifiers"
+	if mods.size() == 0: txt = "No modifiers!!"
 	else:
 		for i in range(mods.size()):
 			if i != 0: txt += ", "
@@ -473,6 +473,7 @@ var mod_ghost:bool = false setget set_mod_ghost
 var mod_sudden_death:bool = false setget set_mod_sudden_death
 var mod_chaos:bool = false setget set_mod_chaos
 var mod_earthquake:bool = false setget set_mod_earthquake
+var mod_360:bool = false setget set_mod_360
 var mod_flashlight:bool = false setget set_mod_flashlight
 var mod_hardrock:bool = false setget set_mod_hardrock
 # Modifiers - Custom values
@@ -528,6 +529,8 @@ func set_mod_chaos(v:bool):
 	mod_chaos = v; emit_signal("mods_changed")
 func set_mod_earthquake(v:bool):
 	mod_earthquake = v; emit_signal("mods_changed")
+func set_mod_360(v:bool):
+	mod_360 = v; emit_signal("mods_changed")
 func set_mod_flashlight(v:bool):
 	mod_flashlight = v; emit_signal("mods_changed")
 func set_mod_hardrock(v:bool):
@@ -540,7 +543,7 @@ func _set_hitbox_size(v:float):
 func _set_hitwindow(v:float):
 	hitwindow_ms = v; emit_signal("mods_changed")
 func _set_custom_speed(v:float):
-	print("custom speed changed")
+	#print("custom speed changed")
 	custom_speed = v
 	Globals.speed_multi[Globals.SPEED_CUSTOM] = v
 	emit_signal("mods_changed")
@@ -839,6 +842,7 @@ func generate_pb_str(for_pb:bool=false):
 	if mod_chaos: pts.append("m_chaos")
 	if invert_mouse: pts.append("m_im")
 	if mod_earthquake: pts.append("m_earthquake")
+	if mod_360: pts.append("m_360")
 	if mod_flashlight: pts.append("m_flashlight")
 	if mod_hardrock: pts.append("m_hardrock")
 	if mod_nofail: pts.append("m_nofail") # for replays
@@ -904,6 +908,7 @@ func parse_pb_str(txt:String):
 				"m_chaos": data.mod_chaos = true
 				"m_im": data.invert_mouse = true
 				"m_earthquake": data.mod_earthquake = true
+				"m_360": data.mod_360 = true
 				"m_flashlight": data.mod_flashlight = true
 				"m_hardrock": data.mod_hardrock = true
 				"m_nofail": data.mod_nofail = true
@@ -2082,10 +2087,8 @@ func do_init(_ud=null):
 		var latest_version = yield(Online,"latest_version")
 		if ProjectSettings.get_setting("application/config/version") != latest_version:
 			var sel = 1
-			Globals.confirm_prompt.s_alert.play()
-			Globals.confirm_prompt.open("A new version of the game was detected.\n Would you like to automatically update?","Outdated",[{text="Ignore",wait=2},{text="Update",wait=1}])
+			Globals.confirm_prompt.open("loud sound = gone \nA new version of the game was detected.\n Would you like to automatically update?","Outdated",[{text="Ignore",wait=2},{text="Update",wait=1}])
 			sel = yield(Globals.confirm_prompt,"option_selected")
-			Globals.confirm_prompt.s_next.play()
 			Globals.confirm_prompt.close()
 			yield(Globals.confirm_prompt,"done_closing")
 			if bool(sel):
@@ -2098,8 +2101,8 @@ func do_init(_ud=null):
 		elif Globals.cmdline.keys().has("updated"):
 			var rdir = Directory.new()
 			rdir.open(OS.get_executable_path().get_base_dir())
-			if rdir.file_exists("SoundSpacePlus.pck.old"):
-				rdir.remove("SoundSpacePlus.pck.old")
+			if rdir.file_exists("Rhythiarot.pck.old"):
+				rdir.remove("Rhythiarot.pck.old")
 			if rdir.file_exists("update.zip"):
 				rdir.remove("update.zip")
 	
@@ -2400,7 +2403,7 @@ func do_init(_ud=null):
 		# errors are returned when settings are invalid
 		get_tree().change_scene("res://scenes/errors/settings.tscn")
 		return
-	print('settings done')
+	#print('settings done')
 	if !hlm_converted:
 		parallax *= (0.35/0.25)
 		ui_parallax *= (0.35/0.25)
