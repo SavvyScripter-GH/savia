@@ -851,7 +851,6 @@ func back_to_menu():
 	get_tree().change_scene("res://scenes/loaders/menuload.tscn")
 
 func _ready():
-	
 	$SelectType/txt.connect("pressed",self,"select_type",[T_TXT])
 	$SelectType/sspm.connect("pressed",self,"select_type",[T_SSPM])
 	$SelectType/vulnus.connect("pressed",self,"select_type",[T_VULNUS])

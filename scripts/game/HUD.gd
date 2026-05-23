@@ -465,10 +465,6 @@ func _ready():
 	
 	songnametxt.text = Rhythia.selected_song.name
 	
-	
-	
-	
-	
 	var ms = ""
 	
 	if Rhythia.replaying:
@@ -502,7 +498,7 @@ func _ready():
 	if Rhythia.mod_nearsighted: mods.append("Nearsight")
 	if Rhythia.mod_chaos: mods.append(tr("Chaos"))
 	if Rhythia.mod_earthquake: mods.append(tr("Earthquake"))
-	if Rhythia.mod_360: mods.append(tr("360"))
+	if Rhythia.mod_360: mods.append(tr("360x%s" %Rhythia.mod_360_speed))
 	if Rhythia.mod_hardrock: mods.append(tr("Hard Rock"))
 	if Rhythia.invert_mouse: mods.append(tr("Mouse Inverted"))
 	for i in range(mods.size()):

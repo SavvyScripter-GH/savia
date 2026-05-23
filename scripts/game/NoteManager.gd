@@ -207,7 +207,7 @@ var out_of_notes:bool = false
 func reposition_notes(force:bool=false,rerun_start:int=-1):
 	if Rhythia.mod_360:
 		$Notes.translation = Vector3(1, -1, 0)
-		$Notes.rotation.z = ms * 0.0006
+		$Notes.rotation.z = ms * (Rhythia.mod_360_speed * 0.0006)
 	else:
 		$Notes.rotation.z = 0
 		$Notes.translation = Vector3.ZERO

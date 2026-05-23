@@ -1,4 +1,4 @@
-[gd_scene load_steps=206 format=2]
+[gd_scene load_steps=207 format=2]
 
 [ext_resource path="res://uitheme.tres" type="Theme" id=1]
 [ext_resource path="res://assets/font/Lato/Lato-Regular.ttf" type="DynamicFontData" id=2]
@@ -46,7 +46,7 @@
 [ext_resource path="res://scripts/ui/menu/buttons/SuddenDeath.gd" type="Script" id=44]
 [ext_resource path="res://scripts/ui/menu/buttons/Ghost.gd" type="Script" id=45]
 [ext_resource path="res://scripts/ui/menu/rainbow.gd" type="Script" id=46]
-[ext_resource path="res://scenes/menu/360.gd" type="Script" id=47]
+[ext_resource path="res://scripts/ui/menu/buttons/360.gd" type="Script" id=47]
 [ext_resource path="res://scripts/ui/menu/buttons/PatreonCredits.gd" type="Script" id=48]
 [ext_resource path="res://prefabs/menu/settings_page.tscn" type="PackedScene" id=49]
 [ext_resource path="res://assets/font/UbuntuMono/Regular.ttf" type="DynamicFontData" id=50]
@@ -60,7 +60,7 @@
 [ext_resource path="res://scripts/ui/menu/buttons/ExportTxt.gd" type="Script" id=58]
 [ext_resource path="res://scripts/ui/menu/StartOffset.gd" type="Script" id=59]
 [ext_resource path="res://scripts/ui/menu/buttons/ModChaos.gd" type="Script" id=60]
-[ext_resource path="res://assets/images/ui/placeholder.jpg" type="Texture" id=61]
+[ext_resource path="res://assets/images/branding/VRDJROLE.png" type="Texture" id=61]
 [ext_resource path="res://scripts/ui/menu/GradeSystem.gd" type="Script" id=62]
 [ext_resource path="res://scripts/ui/menu/buttons/VisualMode.gd" type="Script" id=63]
 [ext_resource path="res://assets/sfx/beep.wav" type="AudioStream" id=64]
@@ -95,6 +95,7 @@
 [ext_resource path="res://scripts/ui/menu/ResultsHolder.gd" type="Script" id=93]
 [ext_resource path="res://scripts/ui/menu/buttons/ModEarthquake.gd" type="Script" id=94]
 [ext_resource path="res://scripts/ui/menu/WarningBar.gd" type="Script" id=95]
+[ext_resource path="res://scripts/ui/menu/360Speed.gd" type="Script" id=96]
 [ext_resource path="res://scripts/ui/settings/InvertMouse.gd" type="Script" id=97]
 [ext_resource path="res://assets/images/cursors/circle.png" type="Texture" id=98]
 [ext_resource path="res://scripts/ui/menu/MenuMouse.gd" type="Script" id=99]
@@ -1743,6 +1744,7 @@ size_flags_horizontal = 3
 
 [node name="ModsTitle" type="Label" parent="Main/Maps/Results/Results/RS/HBoxContainer"]
 margin_left = 256.0
+margin_top = -5.0
 margin_right = 636.0
 margin_bottom = 30.0
 focus_mode = 2
@@ -1770,8 +1772,9 @@ size_flags_horizontal = 3
 
 [node name="EndInfo" type="ReferenceRect" parent="Main/Maps/Results/Results/RS/H2"]
 margin_left = 8.0
+margin_top = -5.0
 margin_right = 282.0
-margin_bottom = 360.0
+margin_bottom = 380.0
 rect_min_size = Vector2( 274, 280 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -2048,8 +2051,9 @@ size_flags_horizontal = 3
 
 [node name="Mods" type="ReferenceRect" parent="Main/Maps/Results/Results/RS/H2"]
 margin_left = 294.0
+margin_top = -5.0
 margin_right = 628.064
-margin_bottom = 360.598
+margin_bottom = 385.0
 rect_min_size = Vector2( 334.064, 360.598 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -2067,10 +2071,10 @@ border_color = Color( 0, 1, 1, 0 )
 script = ExtResource( 32 )
 
 [node name="Label" type="Label" parent="Main/Maps/Results/Results/RS/H2/Mods/SpeedMod"]
-margin_left = 7.0
+margin_left = 10.0
 margin_top = -35.0
-margin_right = 54.0
-margin_bottom = -3.0
+margin_right = 57.0
+margin_bottom = -15.0
 focus_mode = 2
 theme = ExtResource( 1 )
 custom_colors/font_color = Color( 0.960784, 1, 0.478431, 1 )
@@ -2083,7 +2087,10 @@ clip_text = true
 [node name="C" type="HBoxContainer" parent="Main/Maps/Results/Results/RS/H2/Mods/SpeedMod"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = 87.0
+margin_left = -3.0
+margin_top = -11.0
+margin_right = 84.0
+margin_bottom = -11.0
 alignment = 1
 
 [node name="MMM" type="Button" parent="Main/Maps/Results/Results/RS/H2/Mods/SpeedMod/C"]
@@ -2457,10 +2464,10 @@ theme = ExtResource( 1 )
 script = ExtResource( 59 )
 
 [node name="Label" type="Label" parent="Main/Maps/Results/Results/RS/H2/Mods/StartOffset"]
-margin_left = -89.0
-margin_top = -13.0
-margin_right = -10.0
-margin_bottom = 26.0
+margin_left = -85.0
+margin_top = -1.0
+margin_right = -6.0
+margin_bottom = 20.0
 focus_mode = 2
 theme = ExtResource( 1 )
 custom_colors/font_color = Color( 0.960784, 1, 0.478431, 1 )
@@ -2479,10 +2486,10 @@ text = "0:00"
 align = 1
 
 [node name="HpModel" type="MenuButton" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 107.0
-margin_top = 319.0
-margin_right = 291.0
-margin_bottom = 345.0
+margin_left = 105.0
+margin_top = 310.0
+margin_right = 289.0
+margin_bottom = 336.0
 focus_mode = 2
 theme = ExtResource( 1 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
@@ -2539,10 +2546,10 @@ __meta__ = {
 }
 
 [node name="NoFail" type="CheckBox" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 96.0
-margin_top = 100.0
-margin_right = 156.0
-margin_bottom = 132.0
+margin_left = 94.0
+margin_top = 91.0
+margin_right = 154.0
+margin_bottom = 123.0
 theme = ExtResource( 1 )
 custom_colors/font_color_hover_pressed = Color( 0.670588, 0.556863, 0.556863, 1 )
 custom_colors/font_color = Color( 0.670588, 0.556863, 0.556863, 1 )
@@ -2567,10 +2574,10 @@ valign = 1
 clip_text = true
 
 [node name="SuddenDeath" type="CheckBox" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 276.0
-margin_top = 100.0
-margin_right = 336.0
-margin_bottom = 132.0
+margin_left = 274.0
+margin_top = 91.0
+margin_right = 334.0
+margin_bottom = 123.0
 theme = ExtResource( 1 )
 custom_colors/font_color_hover_pressed = Color( 0.670588, 0.556863, 0.556863, 1 )
 custom_colors/font_color = Color( 0.670588, 0.556863, 0.556863, 1 )
@@ -2595,10 +2602,10 @@ valign = 1
 clip_text = true
 
 [node name="EasyMode" type="CheckBox" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 96.0
-margin_top = 130.0
-margin_right = 173.0
-margin_bottom = 162.0
+margin_left = 94.0
+margin_top = 121.0
+margin_right = 171.0
+margin_bottom = 153.0
 theme = ExtResource( 1 )
 custom_colors/font_color_hover_pressed = Color( 0.670588, 0.556863, 0.556863, 1 )
 custom_colors/font_color = Color( 0.670588, 0.556863, 0.556863, 1 )
@@ -2623,10 +2630,10 @@ valign = 1
 clip_text = true
 
 [node name="HardMode" type="CheckBox" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 276.0
-margin_top = 129.0
-margin_right = 356.0
-margin_bottom = 161.0
+margin_left = 274.0
+margin_top = 120.0
+margin_right = 354.0
+margin_bottom = 152.0
 theme = ExtResource( 1 )
 custom_colors/font_color_hover_pressed = Color( 0.670588, 0.556863, 0.556863, 1 )
 custom_colors/font_color = Color( 0.670588, 0.556863, 0.556863, 1 )
@@ -2651,10 +2658,10 @@ valign = 1
 clip_text = true
 
 [node name="MirrorX" type="CheckBox" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 96.0
-margin_top = 160.0
-margin_right = 156.0
-margin_bottom = 192.0
+margin_left = 94.0
+margin_top = 151.0
+margin_right = 154.0
+margin_bottom = 183.0
 theme = ExtResource( 1 )
 custom_colors/font_color_hover_pressed = Color( 0.670588, 0.556863, 0.556863, 1 )
 custom_colors/font_color = Color( 0.670588, 0.556863, 0.556863, 1 )
@@ -2679,10 +2686,10 @@ valign = 1
 clip_text = true
 
 [node name="MirrorY" type="CheckBox" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 276.0
-margin_top = 160.0
-margin_right = 336.0
-margin_bottom = 192.0
+margin_left = 274.0
+margin_top = 151.0
+margin_right = 334.0
+margin_bottom = 183.0
 theme = ExtResource( 1 )
 custom_colors/font_color_hover_pressed = Color( 0.670588, 0.556863, 0.556863, 1 )
 custom_colors/font_color = Color( 0.670588, 0.556863, 0.556863, 1 )
@@ -2739,10 +2746,10 @@ __meta__ = {
 }
 
 [node name="Earthquake" type="CheckBox" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 96.0
-margin_top = 190.0
-margin_right = 156.0
-margin_bottom = 222.0
+margin_left = 94.0
+margin_top = 181.0
+margin_right = 154.0
+margin_bottom = 213.0
 theme = ExtResource( 1 )
 custom_colors/font_color_hover_pressed = Color( 0.670588, 0.556863, 0.556863, 1 )
 custom_colors/font_color = Color( 0.670588, 0.556863, 0.556863, 1 )
@@ -2767,10 +2774,10 @@ valign = 1
 clip_text = true
 
 [node name="Chaos" type="CheckBox" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 96.0
-margin_top = 220.0
-margin_right = 156.0
-margin_bottom = 252.0
+margin_left = 94.0
+margin_top = 211.0
+margin_right = 154.0
+margin_bottom = 243.0
 theme = ExtResource( 1 )
 custom_colors/font_color_hover_pressed = Color( 0.670588, 0.556863, 0.556863, 1 )
 custom_colors/font_color = Color( 0.670588, 0.556863, 0.556863, 1 )
@@ -2795,10 +2802,10 @@ valign = 1
 clip_text = true
 
 [node name="Ghost" type="CheckBox" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 276.0
-margin_top = 190.0
-margin_right = 336.0
-margin_bottom = 222.0
+margin_left = 274.0
+margin_top = 181.0
+margin_right = 334.0
+margin_bottom = 213.0
 theme = ExtResource( 1 )
 custom_colors/font_color_hover_pressed = Color( 0.670588, 0.556863, 0.556863, 1 )
 custom_colors/font_color = Color( 0.670588, 0.556863, 0.556863, 1 )
@@ -2823,10 +2830,10 @@ valign = 1
 clip_text = true
 
 [node name="VisualMode" type="CheckBox" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 276.0
-margin_top = 220.0
-margin_right = 336.0
-margin_bottom = 252.0
+margin_left = 274.0
+margin_top = 211.0
+margin_right = 334.0
+margin_bottom = 243.0
 theme = ExtResource( 1 )
 custom_colors/font_color_hover_pressed = Color( 0.670588, 0.556863, 0.556863, 1 )
 custom_colors/font_color = Color( 0.670588, 0.556863, 0.556863, 1 )
@@ -2851,10 +2858,10 @@ valign = 1
 clip_text = true
 
 [node name="InvertMouse" type="CheckBox" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 276.0
-margin_top = 250.0
-margin_right = 336.0
-margin_bottom = 282.0
+margin_left = 274.0
+margin_top = 241.0
+margin_right = 334.0
+margin_bottom = 273.0
 theme = ExtResource( 1 )
 custom_colors/font_color_hover_pressed = Color( 0.670588, 0.556863, 0.556863, 1 )
 custom_colors/font_color = Color( 0.670588, 0.556863, 0.556863, 1 )
@@ -2879,10 +2886,10 @@ valign = 1
 clip_text = true
 
 [node name="360" type="CheckBox" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 96.0
-margin_top = 280.0
-margin_right = 156.0
-margin_bottom = 312.0
+margin_left = 94.0
+margin_top = 271.0
+margin_right = 154.0
+margin_bottom = 303.0
 theme = ExtResource( 1 )
 custom_colors/font_color_hover_pressed = Color( 0.670588, 0.556863, 0.556863, 1 )
 custom_colors/font_color = Color( 0.670588, 0.556863, 0.556863, 1 )
@@ -2907,10 +2914,10 @@ valign = 1
 clip_text = true
 
 [node name="HardRock" type="CheckBox" parent="Main/Maps/Results/Results/RS/H2/Mods"]
-margin_left = 96.0
-margin_top = 250.0
-margin_right = 156.0
-margin_bottom = 282.0
+margin_left = 94.0
+margin_top = 241.0
+margin_right = 154.0
+margin_bottom = 273.0
 theme = ExtResource( 1 )
 custom_colors/font_color_hover_pressed = Color( 0.670588, 0.556863, 0.556863, 1 )
 custom_colors/font_color = Color( 0.670588, 0.556863, 0.556863, 1 )
@@ -2933,6 +2940,41 @@ text = "Hard Rock"
 align = 2
 valign = 1
 clip_text = true
+
+[node name="360Speed" type="HSlider" parent="Main/Maps/Results/Results/RS/H2/Mods"]
+margin_left = 88.0
+margin_top = 345.0
+margin_right = 272.0
+margin_bottom = 368.0
+hint_tooltip = "[def.1]"
+theme = ExtResource( 1 )
+min_value = -2.0
+max_value = 2.0
+step = 0.01
+value = 1.0
+script = ExtResource( 96 )
+
+[node name="Label" type="Label" parent="Main/Maps/Results/Results/RS/H2/Mods/360Speed"]
+margin_left = -85.0
+margin_top = -7.0
+margin_right = -6.0
+margin_bottom = 19.0
+focus_mode = 2
+theme = ExtResource( 1 )
+custom_colors/font_color = Color( 0.960784, 1, 0.478431, 1 )
+custom_fonts/font = SubResource( 91 )
+text = "360 speed"
+align = 2
+valign = 1
+clip_text = true
+
+[node name="SpeedTextBox" type="LineEdit" parent="Main/Maps/Results/Results/RS/H2/Mods/360Speed"]
+margin_left = 189.0
+margin_top = -6.0
+margin_right = 248.0
+margin_bottom = 22.0
+text = "0"
+align = 1
 
 [node name="VSeparator3" type="VSeparator" parent="Main/Maps/Results/Results/RS/H2"]
 modulate = Color( 1, 1, 1, 0 )
@@ -4399,7 +4441,7 @@ scroll_horizontal_enabled = false
 scroll_deadzone = 45
 
 [node name="L" parent="Main/Credits/C/S" instance=ExtResource( 7 )]
-margin_bottom = 1671.0
+margin_bottom = 1594.0
 
 [node name="Content" type="ReferenceRect" parent="Main"]
 visible = false
@@ -4676,7 +4718,6 @@ text = "Language"
 valign = 1
 
 [node name="StartVR" type="Button" parent="Sidebar/L"]
-visible = false
 margin_top = 290.0
 margin_right = 58.0
 margin_bottom = 348.0
@@ -4740,9 +4781,9 @@ text = "Switch to Old Menu"
 valign = 1
 
 [node name="Quit" type="Button" parent="Sidebar/L"]
-margin_top = 290.0
+margin_top = 348.0
 margin_right = 58.0
-margin_bottom = 348.0
+margin_bottom = 406.0
 rect_min_size = Vector2( 0, 58 )
 custom_styles/hover = SubResource( 4 )
 custom_styles/pressed = SubResource( 2 )

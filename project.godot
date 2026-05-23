@@ -144,7 +144,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/cursordance/Momentum.gd"
 }, {
-"base": "Spatial",
+"base": "Reference",
 "class": "Note",
 "language": "GDScript",
 "path": "res://scripts/content/game/Note.gd"
@@ -259,7 +259,7 @@ config/description="testdesc
 "
 run/main_scene="res://scenes/init.tscn"
 config/use_custom_user_dir=true
-config/custom_user_dir_name="Savia"
+config/custom_user_dir_name="SoundSpacePlus"
 run/delta_sync_after_draw=true
 boot_splash/image="res://assets/images/branding/splash.png"
 boot_splash/fullsize=false
@@ -300,8 +300,8 @@ config/disable_native_file_dialogs.OSX=true
 config/is_using_controller=true
 config/discord_rpc=true
 config/discord_rpc.editor=true
-networking/github_repo="SavvyScripter-GH/savia"
-config/version="may22-2026-f"
+networking/github_repo="SavvyScripter-GH/savia_db"
+config/version="may23-2026-b"
 
 [audio]
 

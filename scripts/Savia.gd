@@ -421,6 +421,7 @@ func update_rpc_song(): # Discord RPC
 	if mod_ghost: mods.append("Ghost")
 	if mod_nearsighted: mods.append("Nearsight")
 	if mod_hardrock: mods.append("Hard Rock")
+	if mod_360: mods.append(("360x%s" %Rhythia.mod_360_speed))
 	if replay.autoplayer: mods.append("Auto")
 	
 	if mods.size() == 0: txt = "No modifiers!!"
@@ -471,7 +472,8 @@ var mod_ghost:bool = false setget set_mod_ghost
 var mod_sudden_death:bool = false setget set_mod_sudden_death
 var mod_chaos:bool = false setget set_mod_chaos
 var mod_earthquake:bool = false setget set_mod_earthquake
-var mod_360:bool = false setget set_mod_360
+var mod_360:bool = true setget set_mod_360
+var mod_360_speed:float = 1 setget _set_mod_360_speed
 var mod_hardrock:bool = false setget set_mod_hardrock
 # Modifiers - Custom values
 var start_offset:float = 0 setget _set_start_offset
@@ -528,6 +530,8 @@ func set_mod_earthquake(v:bool):
 	mod_earthquake = v; emit_signal("mods_changed")
 func set_mod_360(v:bool):
 	mod_360 = v; emit_signal("mods_changed")
+func _set_mod_360_speed(v:float):
+	mod_360_speed = v; emit_signal("mods_changed")
 func set_mod_hardrock(v:bool):
 	mod_hardrock = v; emit_signal("mods_changed")
 # Mod setters - Custom values
@@ -1517,7 +1521,7 @@ func load_saved_settings(saveFile:String = Globals.p("user://settings.json")):
 		file.close()
 		save_settings()
 	return 0
-	
+
 func ser_float(n: float):
 	if is_nan(n):
 		return "nan"
@@ -1536,6 +1540,12 @@ func dser_float(s):
 		return s
 
 func save_settings(saveFile:String = Globals.p("user://settings.json")):
+	var dir = Directory.new()
+	var folder_path = "user://"
+	if not dir.dir_exists(folder_path):
+		dir.make_dir_recursive(folder_path)
+		print("Created profiles directory")
+
 	var file:File = File.new()
 	var err:int = file.open(Globals.p(saveFile),File.WRITE)
 	if err == OK:
@@ -1700,9 +1710,7 @@ func save_settings(saveFile:String = Globals.p("user://settings.json")):
 		return "OK"
 	else:
 		print("error code %s" % err)
-
-
-
+		return err
 
 # Built-in content data
 func register_colorsets():
@@ -1904,9 +1912,6 @@ func register_effects():
 		"ssp_miss_w", "Miss* (no color)", "res://assets/notefx/miss/miss.tscn", "Chedski"
 	))
 
-
-
-
 # User colorsets
 signal colors_done
 func load_color_txt(path:String="",id:String=""):
@@ -2038,7 +2043,7 @@ func do_init(_ud=null):
 			single_map_mode_audio_path = Globals.cmdline.audio
 			
 	# Check for updates
-	if OS.has_feature("Windows"): #and !OS.has_feature("editor"):
+	if OS.has_feature("Windows"):# and !OS.has_feature("editor"):
 		emit_signal("init_stage_reached","Check for updates")
 		emit_signal("init_stage_num",-1)
 		yield(get_tree(),"idle_frame")
@@ -2047,10 +2052,10 @@ func do_init(_ud=null):
 		if ProjectSettings.get_setting("application/config/version") != latest_version:
 			var sel = 1
 			if !Online.latest_version_data.body.begins_with("-a"):
-				Globals.confirm_prompt.s_alert.play()
-				Globals.confirm_prompt.open("You are on an outdated version of the game! Would you like to automatically update?","Outdated",[{text="Ignore",wait=4},{text="Update",wait=2}])
+				#Globals.confirm_prompt.s_alert.play()
+				Globals.confirm_prompt.open("loud sound = gone\nYou are on an outdated version of the game! Would you like to automatically update?\nYou will have to manualy extract the update.zip and move the savia.pck file to the /windows folder","Outdated",[{text="Ignore",wait=0},{text="Update",wait=1}])
 				sel = yield(Globals.confirm_prompt,"option_selected")
-				Globals.confirm_prompt.s_next.play()
+				#Globals.confirm_prompt.s_next.play()
 				Globals.confirm_prompt.close()
 				yield(Globals.confirm_prompt,"done_closing")
 			if bool(sel):
@@ -2173,7 +2178,6 @@ func do_init(_ud=null):
 		if dir.file_exists(n + "/pack.sspmr"): mapreg.append([n.get_file(),user_pack_dir + "/" + n + "/pack.sspmr"])
 		n = dir.get_next()
 	dir.list_dir_end()
-	
 	
 	emit_signal("init_stage_reached","Register content")
 	yield(get_tree(),"idle_frame")
@@ -2442,7 +2446,6 @@ func do_init(_ud=null):
 	first_init_done = true
 	do_archive_convert = false
 	
-
 	var alert_snd_played:bool = false
 	if alert != "":
 		emit_signal("init_stage_reached","Alert prompt")

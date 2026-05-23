@@ -26,6 +26,7 @@ func _input(event): # any unicode input starts search
 	if get_focus_owner() == $"/root/Menu/Main/Maps/MapRegistry/T/AuthorSearch": return
 	if get_focus_owner() == $"/root/Menu/Main/Maps/Results/Results/RS/H2/Mods/SpeedMod/C/CustomSpeed".get_line_edit(): return
 	if get_focus_owner() == $"/root/Menu/Main/Maps/Results/Results/RS/H2/Mods/StartOffset/TimeTextBox": return
+	if get_focus_owner() == $"/root/Menu/Main/Maps/Results/Results/RS/H2/Mods/360Speed/SpeedTextBox": return
 	
 	if not is_visible_in_tree(): return
 	if event is InputEventKey and event.is_pressed():

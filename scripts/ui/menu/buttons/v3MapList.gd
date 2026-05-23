@@ -173,7 +173,6 @@ func select_random():
 	cur_map = randi()%disp.size()
 	load_pg(true)
 	
-
 func load_pg(select_cur:bool=false):
 	size_list()
 	for n in btns: n.queue_free()
@@ -200,7 +199,6 @@ func append_filtering_favorites(to:Array,from:Array):
 	for s in from:
 		if !is_fav(s) and search_matches(s):
 			to.append(s)
-
 
 func build_list():
 	disp = []

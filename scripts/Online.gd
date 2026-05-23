@@ -259,61 +259,82 @@ func _import_netmaps(netmaps: Dictionary):
 
 var latest_version_data
 signal latest_version
-var version_hr:HTTPRequest = HTTPRequest.new()
+signal update_finished
+
+onready var version_hr: HTTPRequest = HTTPRequest.new()
+onready var update_hr: HTTPRequest = HTTPRequest.new()
+
 func check_latest_version():
 	if !OS.has_feature("Windows") or !ProjectSettings.get_setting("application/networking/enabled"):
-		emit_signal("latest_version",ProjectSettings.get_setting("application/config/version"))
+		emit_signal("latest_version", ProjectSettings.get_setting("application/config/version"))
 		return
-	var github_url = "https://api.github.com/repos/%s/releases/latest"
-	version_hr.request(github_url % ProjectSettings.get_setting("application/networking/github_repo"))
-func _on_version_request_completed(result:int,response_code:int,headers:PoolStringArray,body:PoolByteArray):
+	
+	var repo = ProjectSettings.get_setting("application/networking/github_repo")
+	var github_url = "https://api.github.com/repos/%s/releases/latest" % repo
+	version_hr.request(github_url)
+
+func _on_version_request_completed(result, response_code, headers, body):
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
-		emit_signal("latest_version",ProjectSettings.get_setting("application/config/version"))
+		emit_signal("latest_version", ProjectSettings.get_setting("application/config/version"))
 		return
-	var string = body.get_string_from_utf8()
-	var json = JSON.parse(string)
-	var data = json.result
-	latest_version_data = data
-	emit_signal("latest_version",data.tag_name)
-signal update_finished
-signal _update_req
-var update_hr:HTTPRequest = HTTPRequest.new()
+	
+	var json = JSON.parse(body.get_string_from_utf8())
+	if json.error == OK:
+		latest_version_data = json.result
+		emit_signal("latest_version", latest_version_data.tag_name)
+
 func attempt_update():
-	var asset
-	for _asset in latest_version_data.assets:
-		if _asset.name == "windows.zip":
-			asset = _asset
+	if !latest_version_data or !latest_version_data.has("assets"):
+		emit_signal("update_finished")
+		return
+
+	var download_url = ""
+	for asset in latest_version_data.assets:
+		if asset.name == "Savia.pck":
+			download_url = asset.browser_download_url
 			break
-	if !asset:
+	
+	if download_url == "":
+		print("Savia.pck not found in release assets.")
 		emit_signal("update_finished")
 		return
+
 	var exec_dir = OS.get_executable_path().get_base_dir()
-	var file_path = exec_dir.plus_file("update.zip")
-	update_hr.download_file = file_path
-	update_hr.request(asset.url,["Accept: application/octet-stream"])
-	var res = yield(self,"_update_req")
-	if res[0] != HTTPRequest.RESULT_SUCCESS or res[1] != 200:
+	var final_path = exec_dir.plus_file("Savia.pck")
+	var temp_path = exec_dir.plus_file("Savia.pck.tmp")
+
+	update_hr.download_file = temp_path
+	update_hr.request(download_url)
+
+func _on_update_request_completed(result, response_code, headers, body):
+	var exec_dir = OS.get_executable_path().get_base_dir()
+	var final_path = exec_dir.plus_file("Savia.pck")
+	var temp_path = exec_dir.plus_file("Savia.pck.tmp")
+	var backup_path = exec_dir.plus_file("Savia.pck.old")
+
+	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
+		print("Download failed.")
 		emit_signal("update_finished")
 		return
-	print("Extracting")
-	ProjectSettings.load_resource_pack(file_path,false)
-	var read_file = File.new()
-	read_file.open("res://Savia.pck",File.READ)
-	var new_file_buffer = read_file.get_buffer(read_file.get_len())
-	read_file.close()
-	var file = File.new()
+
 	var dir = Directory.new()
-	if dir.file_exists(exec_dir.plus_file("Savia.pck.old")):
-		dir.remove(exec_dir.plus_file("Savia.pck.old"))
-	if dir.file_exists(exec_dir.plus_file("Savia.pck")):
-		dir.rename(exec_dir.plus_file("Savia.pck"),exec_dir.plus_file("Savia.pck.old"))
-	dir.remove(file_path)
-	file.open(exec_dir.plus_file("Savia.pck"),File.WRITE)
-	file.store_buffer(new_file_buffer)
-	file.close()
+	
+	# Remove old backup if it exists
+	if dir.file_exists(backup_path):
+		dir.remove(backup_path)
+	
+	# Rename current pck to .old (Backup)
+	if dir.file_exists(final_path):
+		dir.rename(final_path, backup_path)
+	
+	# Rename downloaded .tmp to Savia.pck
+	var err = dir.rename(temp_path, final_path)
+	
+	if err == OK:
+		print("Update successful. Restart required.")
+	else:
+		print("Error swapping files: ", err)
 	emit_signal("update_finished")
-func _on_update_request_completed(result:int,response_code:int,headers:PoolStringArray,body:PoolByteArray):
-	emit_signal("_update_req",[result,response_code])
 
 func _ready():
 	add_child(netmaps_hr)

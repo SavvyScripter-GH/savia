@@ -85,7 +85,7 @@ func to_vr():
 	var activity = Discord.Activity.new()
 	activity.set_type(Discord.ActivityType.Playing)
 	activity.set_details("Loaded VR (test)")
-	activity.set_state("being sigma real")
+	activity.set_state("savvying it in vr!")
 	var assets = activity.get_assets()
 	assets.set_large_image("icon-bg")
 	Discord.activity_manager.update_activity(activity)

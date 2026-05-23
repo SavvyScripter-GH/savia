@@ -15,11 +15,10 @@ func save_profile(path:String):
 		saveLoc.close()
 		file.close()
 
-		# refresh the profile list
 		_ready()
 
 func on_pressed(i):
-	if i == profiles.size() + 1: # Create New From Current
+	if i == profiles.size() + 1:
 		var title = "Enter Profile Name"
 		var valid = false
 		var response:int = 0
@@ -38,21 +37,17 @@ func on_pressed(i):
 			response = yield(Globals.string_prompt,"option_selected")
 			Globals.string_prompt.close()
 			if response == 0:
-				# wait a frame for the prompt to close
 				yield(get_tree().create_timer(0.6),"timeout")
 				valid = Globals.string_prompt.input.get_text().is_valid_filename()
 		
 		if response == 0:
-			Rhythia.save_settings() # ensure the current settings are saved
+			Rhythia.save_settings()
 			Rhythia.save_settings(Globals.p("user://" + Globals.string_prompt.input.get_text() + ".settings.json"))
 		_ready()
 		return
 
-	# load the selected profile
 	var profile = profiles[i]
 	print("Loading profile: " + profile)
-	# overwrite Globals.p("user://settings.json") with the selected profile
-	# Rhythia.is_switch_profile = true
 	get_viewport().get_node("Menu").black_fade_target = true
 	yield(get_tree().create_timer(0.35),"timeout")
 	get_tree().change_scene("res://scenes/init.tscn")
@@ -64,14 +59,11 @@ func _ready():
 	get_popup().clear()
 	delete_submenu.clear()
 	overwrite_submenu.clear()
-	# for every file Globals.p("user://<something>.settings.json") add an item with the name of the file
-	profiles = Globals.get_files_recursive([Globals.p("user://")], 1, "json").files # just putting .settings.json here doesn't work :(
-	# remove ones that are not settings profiles
-	for i in range(profiles.size() - 1, -1, -1): # reverse traversal, prevent bad index
+	profiles = Globals.get_files_recursive([Globals.p("user://")], 1, "json").files
+	for i in range(profiles.size() - 1, -1, -1):
 		if profiles[i].find(".settings.json") == -1:
 			profiles.remove(i)
 
-	#.substr(profiles[i].find_last("/") + 1, profiles[i].find(".settings.json") - profiles[i].find_last("/") - 1)
 	for i in range(profiles.size()):
 		var profileName = profiles[i].substr(profiles[i].find_last("/") + 1, profiles[i].find(".settings.json") - profiles[i].find_last("/") - 1)
 		get_popup().add_item(profileName, i)
