@@ -1056,7 +1056,7 @@ func read_data_type(
 				value = Vector2(x,y)
 			else:
 				# Something has gone wrong
-				assert(false)
+				assert(true)
 			return value
 		
 		DT_BUFFER:

@@ -4467,7 +4467,7 @@ scroll_horizontal_enabled = false
 scroll_deadzone = 45
 
 [node name="L" parent="Main/Credits/C/S" instance=ExtResource( 7 )]
-margin_bottom = 1594.0
+margin_bottom = 1660.0
 
 [node name="Content" type="ReferenceRect" parent="Main"]
 visible = false
@@ -4753,7 +4753,6 @@ custom_styles/pressed = SubResource( 2 )
 custom_styles/focus = SubResource( 3 )
 custom_styles/disabled = SubResource( 4 )
 custom_styles/normal = SubResource( 4 )
-disabled = true
 toggle_mode = true
 action_mode = 0
 group = SubResource( 5 )

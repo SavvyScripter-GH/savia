@@ -16,7 +16,7 @@ func _ready():
 	$TimeTextBox.connect("text_entered", self, "time_text_entered")
 	Rhythia.connect("selected_song_changed",self,"on_map_selected")
 
-	if (Rhythia.selected_song != null):	# after song pass
+	if (Rhythia.selected_song != null):
 		on_map_selected(null)
 		self.value = Rhythia.start_offset / 1000
 

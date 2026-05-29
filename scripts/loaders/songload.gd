@@ -11,6 +11,7 @@ var black_fade:float = 0
 
 func _ready():
 	print("song loading")
+	Rhythia.send_analytics_event("map_play", {"map_name": Rhythia.selected_song.name, "client_id": Rhythia.cid}, Rhythia.cid)
 	get_tree().paused = false
 	if Rhythia.vr:
 		Rhythia.vr_player.transform.origin = Vector3(0,-2.5,4.5)

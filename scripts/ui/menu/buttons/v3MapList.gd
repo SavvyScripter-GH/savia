@@ -438,8 +438,17 @@ func firstload():
 
 func update_clouds():
 	for btn in btns:
-		if btn.has_node("Cloud") and btn.song:
-			btn.get_node("Cloud").visible = btn.song.is_online
+		if is_instance_valid(btn) and btn.get("song"):
+			var map:Song = btn.song
+			if btn.has_node("Cloud"):
+				btn.get_node("Cloud").visible = btn.song.is_online
+			if map.has_cover and btn.has_node("Cover"):
+				var cover_node = btn.get_node("Cover")
+				if !map.cover:
+					map._get_cover()
+				cover_node.texture = map.cover
+				cover_node.visible = true
+			
 
 func pg_up_cont():
 	scrolling_to = false

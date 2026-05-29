@@ -11,6 +11,7 @@ func start_download():
 
 func end_download(v:bool=false):
 	$Cancel.release_focus()
+	
 	visible = v
 
 func _process(delta):

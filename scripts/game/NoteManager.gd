@@ -118,7 +118,7 @@ func note_reposition(i:int):
 			nt.origin.y = real_position.y + (rcoord.y * (current_dist * 0.1))
 		
 		if Rhythia.mod_strobe:
-			if int(ms) % 400 > 200:
+			if int(ms) % 500 > 250:
 				$Notes.visible = false
 			else:
 				$Notes.visible = true
@@ -305,6 +305,11 @@ func reposition_notes(force:bool=false,rerun_start:int=-1):
 				if !Rhythia.replaying and Rhythia.record_replays:
 					Rhythia.replay.note_hit(i)
 				notes[i][2] = Globals.NSTATE_HIT
+				
+				#var offset_ms = ms - notems
+				#var hit_bar = get_node_or_null("../HUD/TimingBarVP/HitErrorBar")
+				#if hit_bar:
+					#hit_bar.add_hit_tick(offset_ms)
 #				if Rhythia.play_hit_snd and !Rhythia.ensure_hitsync:
 #					var sfx
 #					if Rhythia.sfx_2d:

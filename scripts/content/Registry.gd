@@ -111,6 +111,7 @@ func add_sspm_map(path:String):
 		return
 	add_item(song)
 	return song
+
 func add_sspm_cached_map(path:String, cache:Dictionary):
 	var song:Song = Song.new()
 	var res = song.load_from_cache(cache)

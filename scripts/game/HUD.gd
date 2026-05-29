@@ -217,9 +217,17 @@ func update_timer(ms:float,canSkip:bool=false):
 				paint(n,timer_text)
 	
 	timebar.value = (clamp(qms/lms,0,1)) 
-	if canSkip: timelabel.text = "PRESS SPACE TO SKIP"
-	elif canSkip and OS.has_feature("Android"): timelabel.text = "TAP TO SKIP"
-	else: timelabel.text = "%d:%02d / %d:%02d" % [m,rs,lm,lrs]
+	
+	if canSkip: 
+		var expire_threshold_ms = ms + (3000 * Spawn.speed_multi)
+		var skip_expires_sec = max(0.0, (Spawn.next_ms - expire_threshold_ms) / 1000.0)
+		
+		var action_text = "TAP" if OS.has_feature("Android") else "PRESS SPACE"
+		
+		timelabel.text = "%s TO SKIP, Expires in  %.1fs" % [action_text, skip_expires_sec]
+	else: 
+		timelabel.text = "%d:%02d / %d:%02d" % [m,rs,lm,lrs]
+		
 	Rhythia.song_end_time_str = "%d:%02d" % [m,rs]
 	
 	if Rhythia.queue_active:

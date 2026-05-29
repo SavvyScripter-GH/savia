@@ -170,6 +170,62 @@ var black_fade_target:bool = true
 var black_fade:float = 1
 var passed:bool = false
 
+var volume_canvas: CanvasLayer
+var volume_label: Label
+var volume_percent: float = 1.0
+var volume_fade_timer: float = 0.0
+
+func _input(event):
+	if Input.is_key_pressed(KEY_ALT):
+		if event is InputEventMouseButton and event.pressed:
+			if event.button_index == BUTTON_WHEEL_UP:
+				_change_volume(0.05)
+
+			elif event.button_index == BUTTON_WHEEL_DOWN:
+				_change_volume(-0.05)
+
+func _change_volume(amount: float):
+	if not is_instance_valid(volume_canvas):
+		_spawn_volume_ui()
+	
+	volume_percent = clamp(volume_percent + amount, 0.0, 1.0)
+	
+	AudioServer.set_bus_volume_db(0, linear2db(volume_percent))
+	
+	volume_label.text = "Volume: %d%%" % (volume_percent * 100)
+	volume_fade_timer = 2.0
+
+func _spawn_volume_ui():
+	volume_canvas = CanvasLayer.new()
+	volume_canvas.layer = 100 
+	
+	volume_label = Label.new()
+	volume_label.text = "Volume: 100%"
+	
+	volume_label.anchor_left = 1.0
+	volume_label.anchor_top = 1.0
+	volume_label.anchor_right = 1.0
+	volume_label.anchor_bottom = 1.0
+	
+	volume_label.margin_left = -150
+	volume_label.margin_top = -50
+	volume_label.margin_right = -20
+	volume_label.margin_bottom = -20
+	
+	volume_label.align = Label.ALIGN_RIGHT
+	volume_label.valign = Label.VALIGN_BOTTOM
+	
+	volume_label.add_color_override("font_color_shadow", Color(0, 0, 0, 1))
+	volume_label.add_constant_override("shadow_offset_x", 2)
+	volume_label.add_constant_override("shadow_offset_y", 2)
+	
+	volume_label.modulate.a = 0.0 
+	
+	volume_canvas.add_child(volume_label)
+	add_child(volume_canvas)
+	
+	volume_percent = Rhythia.music_volume_db
+
 func _process(delta):
 	
 	if !Rhythia.queue_active and $Spawn.ms > last_ms:
@@ -207,6 +263,13 @@ func _process(delta):
 		black_fade = max(black_fade - (delta/0.75),0)
 		$BlackFade.color = Color(0,0,0,black_fade)
 	$BlackFade.visible = (black_fade != 0)
+	
+	if is_instance_valid(volume_canvas):
+		if volume_fade_timer > 0:
+			volume_fade_timer -= delta
+			volume_label.modulate.a = lerp(volume_label.modulate.a, 1.0, 15 * delta)
+		else:
+			volume_label.modulate.a = lerp(volume_label.modulate.a, 0.0, 5 * delta)
 	
 
 func linstep(a:float,b:float,x:float):

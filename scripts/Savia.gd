@@ -2,6 +2,140 @@ extends Node
 
 onready var rootg = get_tree().root
 
+const GA4_ID = "hiddenforsaftey"
+const GA4_SECRET = "hiddenforsaftey"
+
+var heartbeat_timer: Timer
+var cid: String = ""
+
+func _on_heartbeat_timeout(cid: String):
+	send_analytics_event("session_heartbeat", {}, cid)
+
+func check_for_update_log():
+	var config = ConfigFile.new()
+	config.load("user://settings.cfg")
+	
+	var client_id = config.get_value("internal", "client_id", "")
+	if client_id == "":
+		client_id = _generate_simple_id()
+		config.set_value("internal", "client_id", client_id)
+		config.save("user://settings.cfg")
+	
+	Rhythia.cid = client_id
+	send_analytics_event("app_launch", {
+			"client_id": Rhythia.cid,
+			"version": ProjectSettings.get_setting("application/config/version"),
+			"platform": OS.get_name()
+		}, 
+		client_id
+	)
+	start_heartbeat(client_id)
+	
+	var current_version = ProjectSettings.get_setting("application/config/version")
+	var last_seen_version = config.get_value("internal", "last_version", "0.0.0")
+	
+	if current_version != last_seen_version:
+		show_update_log(current_version, last_seen_version)
+		send_analytics_event("app_update", {}, client_id)
+		config.set_value("internal", "last_version", current_version)
+		config.save("user://settings.cfg")
+
+func send_analytics_event(event_name: String, other_payload: Dictionary, cid: String):
+	var url = "https://www.google-analytics.com/mp/collect?api_secret=%s&measurement_id=%s" % [GA4_SECRET, GA4_ID]
+	
+	var config = ConfigFile.new()
+	config.load("user://settings.cfg")
+	var client_id = config.get_value("internal", "client_id", "")
+	if client_id == "":
+		client_id = _generate_simple_id()
+		config.set_value("internal", "client_id", client_id)
+		config.save("user://settings.cfg")
+		
+	var payload = {
+		"client_id": cid,
+		"events": [{
+			"name": event_name,
+			"params": other_payload
+		}]
+	}
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request(url, ["Content-Type: application/json"], false, HTTPClient.METHOD_POST, JSON.print(payload))
+	yield(http, "request_completed")
+	http.queue_free()
+
+func start_heartbeat(cid: String):
+	if heartbeat_timer: return 
+	heartbeat_timer = Timer.new()
+	heartbeat_timer.wait_time = 60
+	heartbeat_timer.autostart = true
+	heartbeat_timer.connect(
+	"timeout",
+	self,
+	"send_analytics_event",
+	[
+		"session_heartbeat",
+		{
+			"client_id": Rhythia.cid,
+			"version": ProjectSettings.get_setting("application/config/version"),
+			"platform": OS.get_name()
+		},
+		cid
+	]
+)
+	add_child(heartbeat_timer)
+
+func _generate_simple_id() -> String:
+	randomize()
+	var chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+	var id = ""
+	for i in range(16): id += chars[randi() % chars.length()]
+	return id
+
+const VERSION_SEQUENCE = [
+	"may23-2026-e", "may23-2026-f", "may23-2026-g", "may23-2026-h",
+	"may24-2026-a", "may24-2026-b", "may24-2026-c", "may24-2026-d", 
+	"may24-2026-e",
+	"may29-2026-a"
+]
+
+const VERSION_NOTES = {
+	"LEGACY": "- Added Update Notifications\n- 360 mod (duuhh)\n- arcw\n- Added Strobe mod!\n- Fixed Online maps (partially)\n- Added Nyo to testers\n- Added Vanfi to testers\n- Added Dylan Jarvis to patreon (joke)\n- Brrecken's gay!",
+	"may24-2026-d": "- Online maps fixed",
+	"may24-2026-e": "- Backend Changes",
+	"may29-2026-a": "- Updated notification system logic\n- Added Alt volume wheel\n- Skip info\n- Added Elizondo the Third to testers\n- Added Nullight to testers\n- Re-enabled vr for testing",
+}
+
+func show_update_log(current_ver, old_ver):
+	var full_display_text = ""
+	
+	if not old_ver in VERSION_SEQUENCE:
+		full_display_text += "[Legacy Updates]\n" + VERSION_NOTES["LEGACY"] + "\n"
+	
+	var found_old = false
+	if not old_ver in VERSION_SEQUENCE: 
+		found_old = true
+		
+	for v in VERSION_SEQUENCE:
+		if not found_old:
+			if v == old_ver:
+				found_old = true
+			continue
+		
+		if VERSION_NOTES.has(v):
+			full_display_text += "\n[" + v + "]\n" + VERSION_NOTES[v] + "\n"
+
+	if full_display_text == "":
+		full_display_text = "aaaaaaaaaaaaaaaaaaaaaaaaa\n(something clearly went wrong)."
+
+	Globals.notify(
+		Globals.NOTIFY_INFO,
+		full_display_text,
+		"What's New in " + current_ver,
+		15
+	)
+
 # Signals
 signal mods_changed
 signal speed_mod_changed
@@ -808,7 +942,10 @@ func remove_favorite(id:String):
 		favorite_songs.remove(favorite_songs.find(id))
 		emit_signal("favorite_songs_changed")
 		save_favorites()
-
+func _load_covers():
+	var allmaps:Array = Rhythia.registry_song.get_items()
+	for i in range(allmaps.size()):
+		allmaps[i]._get_cover()
 
 
 # Personal bests
@@ -1002,26 +1139,6 @@ func memory_lacu():
 		if ctxt.to_upper() == "DYAMO": return true
 	return false
 	
-func check_for_update_log():
-	var config = ConfigFile.new()
-	var err = config.load("user://settings.cfg")
-	
-	var current_version = ProjectSettings.get_setting("application/config/version")
-	
-	var last_seen_version = config.get_value("internal", "last_version", "0.0.0")
-	
-	if current_version != last_seen_version:
-		show_update_log(current_version)
-		
-		config.set_value("internal", "last_version", current_version)
-		config.save("user://settings.cfg")
-
-func show_update_log(ver):
-	Globals.notify(
-		Globals.NOTIFY_INFO, 
-		"Updated to " + ver + "!\n- Added Update Notifications\n- 360(duuhh)\n- arcw\n- Added Strobe!\n- Fixed Online maps(entierly)\n- Dylan Jarvis\n- Nullight\n- Brrecken's gay!", 
-		"What's New"
-	)
 # Settings save/load helpers
 func scol(c:Color) -> String:
 	return c.to_html(c.a != 1)
@@ -1740,12 +1857,23 @@ func save_settings(saveFile:String = Globals.p("user://settings.json")):
 # Built-in content data
 func register_colorsets():
 	registry_colorset.add_item(ColorSet.new(
+	[
+		Color("#e95f5f"), Color("#ffb2b2"), Color("#e88d5f"), Color("#ffcdb2"), Color("#e8ba5f"), Color("#ffe8b2"),
+		Color("#e8e85f"), Color("#faffb2"), Color("#bae85f"), Color("#dfffb2"), Color("#8de85f"), Color("#c4ffb2"),
+		Color("#5fe85f"), Color("#b2ffbb"), Color("#5fe88d"), Color("#b2ffd6"), Color("#5fe8ba"), Color("#b2fff1"),
+		Color("#5fe8e8"), Color("#b2f1ff"), Color("#5fbae8"), Color("#b2d6ff"), Color("#5f8de8"), Color("#b2bbff"),
+		Color("#5f5fe8"), Color("#c4b2ff"), Color("#8d5fe8"), Color("#dfb2ff"), Color("#ba5fe8"), Color("#fab2ff"),
+		Color("#e85fe8"), Color("#ffb2e8"), Color("#e85fa4"), Color("#ffb2cd"), Color("#e85f8d"),Color("#ffb2b2")
+	],
+		"ssp_rainbowfreeze2", "rainbow freeze 2", "tony bologna"
+	))
+	registry_colorset.add_item(ColorSet.new(
 		[ Color("#00ffed"), Color("#ff8ff9") ],
 		"ssp_cottoncandy", "Cotton Candy", ""
 	))
 	registry_colorset.add_item(ColorSet.new(
 		[ Color("#ffb3e1"), Color("#ffffff") ],
-		"ssp_brecken", "Brecken's Choice", "Brecken"
+		"ssp_brecken", "Brecken's Choice", "BrRecken"
 	))
 	registry_colorset.add_item(ColorSet.new(
 		[ Color("#ffcc4d"),Color("#ff7892"),Color("#e5dd80") ],
@@ -2078,7 +2206,7 @@ func do_init(_ud=null):
 			var sel = 1
 			if !Online.latest_version_data.body.begins_with("-a"):
 				#Globals.confirm_prompt.s_alert.play()
-				Globals.confirm_prompt.open("loud sound = gone\nYou are on an outdated version of the game! Would you like to automatically update?\nYou will have to manualy extract the update.zip and move the savia.pck file to the /windows folder","Outdated",[{text="Ignore",wait=0},{text="Update",wait=1}])
+				Globals.confirm_prompt.open("loud sound = gone\nYou are on an outdated version of the game! Would you like to automatically update?","Outdated",[{text="Ignore",wait=0},{text="Update",wait=1}])
 				sel = yield(Globals.confirm_prompt,"option_selected")
 				#Globals.confirm_prompt.s_next.play()
 				Globals.confirm_prompt.close()
